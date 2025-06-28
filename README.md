@@ -1,59 +1,36 @@
-Sub FilterByRiskLevel(riskLevel As String)
+Private Sub AddClient_Click()
+ Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("clients")
 
-    Dim riskWS As Worksheet: Set riskWS = Worksheets("risk_list")
-    Dim transWS As Worksheet: Set transWS = Worksheets("transactions")
+    Dim tbl As ListObject
+    Set tbl = ws.ListObjects(1)
 
-    Dim countryList As String
-    Dim i As Long, lastRow As Long
+    Dim existingIDs As Range
+    Set existingIDs = tbl.ListColumns("CustomerID").DataBodyRange
 
-    ' Zbierz kraje o wybranym poziomie ryzyka
-    With riskWS
-        lastRow = .Cells(.Rows.Count, 1).End(xlUp).Row
-        For i = 2 To lastRow
-            If .Cells(i, 2).Value = riskLevel Then
-                countryList = countryList & "," & .Cells(i, 1).Value
-            End If
-        Next i
-    End With
+    Dim newID As String: newID = Trim(Me.TextBox1.Value)
+    Dim newName As String: newName = Trim(Me.TextBox2.Value)
+    Dim newCountry As String: newCountry = Trim(Me.TextBox3.Value)
 
-    If countryList = "" Then
-        MsgBox "Brak krajów o ryzyku: " & riskLevel, vbExclamation
+    ' Check if ID is empty
+    If newID = "" Or newName = "" Or newCountry = "" Then
+        MsgBox "Please fill in all fields.", vbExclamation
         Exit Sub
     End If
 
-    countryList = Mid(countryList, 2) ' usuń pierwszy przecinek
+    ' Check if ID already exists
+    If Application.WorksheetFunction.CountIf(existingIDs, newID) > 0 Then
+        MsgBox "Client already exists!", vbCritical
+        Exit Sub
+    End If
 
-    ' Filtruj transakcje wg kraju (Country = kolumna 6)
-    With transWS
-        .AutoFilterMode = False
-        .Range("A1").AutoFilter Field:=6, Criteria1:=Split(countryList, ","), Operator:=xlFilterValues
+    ' Add new row
+    With tbl.ListRows.Add
+        .Range(1, 1).Value = newID
+        .Range(1, 2).Value = newName
+        .Range(1, 3).Value = newCountry
     End With
 
+    MsgBox "New client added successfully!", vbInformation
+    Unload Me
 End Sub
-
-
-
-Sub FilterHigh()
-    FilterByRiskLevel "High"
-End Sub
-
-Sub FilterMedium()
-    FilterByRiskLevel "Medium"
-End Sub
-
-Sub FilterLow()
-    FilterByRiskLevel "Low"
-End Sub
-
-Sub ResetFilter()
-    Dim ws As Worksheet
-    Set ws = Worksheets("transactions")
-
-    Dim tbl As ListObject
-    Set tbl = ws.ListObjects(1) ' lub podaj nazwę, np. ws.ListObjects("TransactionsTable")
-
-    If tbl.AutoFilter.FilterMode Then
-        tbl.AutoFilter.ShowAllData
-    End If
-End Sub
-
