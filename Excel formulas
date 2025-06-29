@@ -1,0 +1,169 @@
+🧮 1. SUMA (SUM)
+Dodaje liczby w zakresie.
+
+Składnia: =SUMA(A1:A10)
+
+Przykład: Dodaje wartości z komórek A1 do A10.
+
+🔍 2. WYSZUKAJ.PIONOWO (VLOOKUP)
+Służy do wyszukiwania wartości w pierwszej kolumnie tabeli i zwracania odpowiadającej wartości z innej kolumny.
+
+Składnia: =WYSZUKAJ.PIONOWO(klucz; tabela; nr_kolumny; [przybliżone_dopasowanie])
+
+Przykład: =WYSZUKAJ.PIONOWO(101; A2:C10; 3; FAŁSZ) – znajdź ID 101 i zwróć wartość z 3. kolumny.
+
+🔗 3. INDEKS + PODAJ.POZYCJĘ (INDEX + MATCH)
+Bardziej elastyczna alternatywa dla VLOOKUP.
+
+INDEKS: =INDEKS(tablica; wiersz; [kolumna])
+
+PODAJ.POZYCJĘ: =PODAJ.POZYCJĘ(szukana_wartość; zakres; 0)
+
+🔁 Użycie razem:
+=INDEKS(C2:C10; PODAJ.POZYCJĘ(101; A2:A10; 0)) – znajdź wiersz z ID 101 w kolumnie A i zwróć odpowiadającą wartość z kolumny C.
+
+🧠 4. JEŻELI (IF)
+Warunkowe działanie.
+
+Składnia: =JEŻELI(warunek; wartość_jeśli_prawda; wartość_jeśli_fałsz)
+
+Przykład: =JEŻELI(A1>100; "Dużo"; "Mało")
+
+📊 5. SUMA.JEŻELI (SUMIF)
+Sumuje tylko wartości spełniające określone kryterium.
+
+Składnia: =SUMA.JEŻELI(zakres; kryterium; [zakres_sumowania])
+
+Przykład: =SUMA.JEŻELI(B2:B10; ">100")
+
+🧮 6. LICZ.JEŻELI (COUNTIF)
+Zlicza komórki spełniające kryterium.
+
+Składnia: =LICZ.JEŻELI(zakres; kryterium)
+
+Przykład: =LICZ.JEŻELI(A1:A10; "Jan")
+
+📌 7. TEXT (TEKST)
+Formatowanie liczb/daty jako tekst.
+
+Składnia: =TEKST(wartość; "format")
+
+Przykład: =TEKST(DZIŚ(); "rrrr-mm-dd")
+
+📅 8. DZIŚ, TERAZ (TODAY, NOW)
+=DZIŚ() – zwraca bieżącą datę.
+
+=TERAZ() – zwraca bieżącą datę i czas.
+
+⚖️ 9. ZAOKR, ZAOKR.DO.CAŁK, ZAOKR.GÓRA (ROUND, ROUNDUP, ROUNDDOWN)
+Zaokrąglanie liczb:
+
+=ZAOKR(123.456; 2) → 123,46
+
+=ZAOKR.GÓRA(123.456; 1) → 123,5
+
+🧩 10. CONCAT / ZŁĄCZ.TEKSTY / TEXTJOIN
+Łączenie tekstu:
+
+=ZŁĄCZ.TEKSTY(A1; " "; B1)
+
+=TEXTJOIN(", "; PRAWDA; A1:A3)
+
+FORMUŁY DYNAMICZNE
+
+:
+🧩 1. X.WYSZUKAJ (XLOOKUP)
+Nowoczesna alternatywa dla WYSZUKAJ.PIONOWO i INDEKS+PODAJ.POZYCJĘ.
+
+Składnia:
+=X.WYSZUKAJ(szukana_wartość; zakres_szukania_ wartości; zakres_wyników_do_zwrócenia; [jeśli_nie_znaleziono]; [tryb_dopasowania]; [tryb_przeszukiwania])
+
+Przykład:
+=X.WYSZUKAJ("Anna"; A2:A100; B2:B100; "Brak") – znajdź imię "Anna" i zwróć wartość z kolumny obok.
+
+✅ Działa również dla wartości z prawej do lewej, czego nie potrafi WYSZUKAJ.PIONOWO.
+
+🧮 2. FILTRUJ (FILTER)
+Dynamiczne filtrowanie danych bez potrzeby stosowania filtrów tabelowych.
+
+Składnia:
+=FILTRUJ(tablica; warunek; [jeśli_brak])
+
+Przykład:
+=FILTRUJ(A2:C100; C2:C100="Kraków") – pokaż wszystkie wiersze z Krakowem.
+
+✅ Zwraca dynamiczną listę wyników.
+
+🧠 3. UNIKATOWE (UNIQUE)
+Zwraca unikalne wartości z zakresu.
+
+Składnia:
+=UNIKATOWE(zakres)
+
+Przykład:
+=UNIKATOWE(A2:A100) – lista unikalnych nazw z kolumny A.
+
+🔢 4. SORTUJ (SORT)
+Sortowanie danych dynamicznie – bez potrzeby "Sortuj → rosnąco/malejąco".
+
+Składnia:
+=SORTUJ(tablica; [indeks_kolumny]; [rosnąco/malejąco])
+
+Przykład:
+=SORTUJ(A2:B100; 2; FAŁSZ) – sortuj dane według drugiej kolumny malejąco.
+
+🔢 5. SORTUJ.WEDŁUG (SORTBY)
+Sortowanie danych na podstawie innej kolumny.
+
+Przykład:
+=SORTUJ.WEDŁUG(A2:C100; C2:C100; 1) – sortuj dane według kolumny C rosnąco.
+
+🧮 6. SEKWENCJA (SEQUENCE)
+Generowanie ciągów liczb – bardzo przydatne w analizach.
+
+Składnia:
+=SEKWENCJA(wiersze; [kolumny]; [wartość_początkowa]; [krok])
+
+Przykład:
+=SEKWENCJA(10;1;1;1) → liczby od 1 do 10 w kolumnie
+
+🔢 7. LICZBA.WIERSZY, LICZBA.KOLUMN
+=LICZBA.WIERSZY(A2:A100) → ile jest wierszy
+
+=LICZBA.KOLUMN(A1:D1) → ile kolumn
+
+Używane często razem z funkcjami dynamicznymi (np. w INDEKS, OFFSET).
+
+🧱 8. PRZESUNIĘCIE (OFFSET)
+Tworzy dynamiczny zakres względem wskazanego punktu.
+
+Składnia:
+=PRZESUNIĘCIE(punkt_startowy; liczba_wierszy; liczba_kolumn; [wysokość]; [szerokość])
+
+Przykład:
+=SUMA(PRZESUNIĘCIE(A1; 0; 0; LICZ.JEŻELI(A:A; "<>"))) – suma dynamicznego zakresu.
+
+📊 9. TABLICE DYNAMICZNE
+Funkcje jak FILTRUJ, UNIKATOWE, SORTUJ i X.WYSZUKAJ działają jako funkcje tablicowe – to znaczy, że rozlewają się na sąsiednie komórki automatycznie.
+
+📅 10. LET i LAMBDA (dla zaawansowanych)
+Pozwalają tworzyć własne nazwy zmiennych i funkcje:
+
+LET – przypisywanie zmiennych wewnątrz formuły
+
+LAMBDA – tworzenie własnych funkcji w Excelu
+
+✨ Przykład dynamicznego dashboardu:
+Można np. połączyć:
+
+FILTRUJ + UNIKATOWE do stworzenia dropdowna
+
+X.WYSZUKAJ do dynamicznego podciągania danych
+
+SORTUJ + SEKWENCJA do wyświetlania rankingów
+
+
+
+
+
+
