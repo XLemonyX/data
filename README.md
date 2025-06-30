@@ -1,4 +1,4 @@
-Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object)
+    Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object)
     Dim wsScope As Worksheet, wsMAKRO As Worksheet, wsTasks As Worksheet, wsLog As Worksheet
     Set wsScope = Sheets("Scope")
     Set wsMAKRO = Sheets("MAKRO")
@@ -100,4 +100,4 @@ Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object
 
     MsgBox "Przypisano zadania dla: " & clientName, vbInformation
     Unload callingForm
-End Sub
+    End Sub
