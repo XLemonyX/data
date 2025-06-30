@@ -1,4 +1,4 @@
-Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long) As Long
+    Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long) As Long
     Dim col As Long
     For col = 1 To ws.Cells(headerRow, ws.Columns.Count).End(xlToLeft).Column
         If Trim(ws.Cells(headerRow, col).Value) = headerName Then
@@ -7,9 +7,9 @@ Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long
         End If
     Next col
     GetColumnIndex = 0
-End Function
+    End Function
 
-Function FindLatestAssignmentInfo(taskID As String) As String
+    Function FindLatestAssignmentInfo(taskID As String) As String
     Dim wsLog As Worksheet: Set wsLog = Sheets("Assigned_Tasks")
     Dim lastRow As Long: lastRow = wsLog.Cells(wsLog.Rows.Count, 1).End(xlUp).Row
     Dim i As Long
@@ -27,9 +27,9 @@ Function FindLatestAssignmentInfo(taskID As String) As String
     Next i
 
     FindLatestAssignmentInfo = ""
-End Function
+    End Function
 
-Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
+    Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
     Dim btnDo As Button, btnReject As Button
     Dim topPos As Double: topPos = ws.Rows(rowIndex).Top
     Dim leftDo As Double: leftDo = ws.Columns(7).Left
@@ -50,4 +50,4 @@ Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
         .Caption = "❌ Reject"
         .Name = "btnReject_" & rowIndex
     End With
-End Sub
+    End Sub
