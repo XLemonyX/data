@@ -1,100 +1,53 @@
-Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object)
-    Dim wsScope As Worksheet, wsMAKRO As Worksheet, wsLog As Worksheet, wsEmp As Worksheet
-    Set wsScope = Sheets("Scope")
-    Set wsMAKRO = Sheets("MAKRO")
-    Set wsLog = Sheets("Assigned_Tasks")
-    Set wsEmp = Sheets("Employees")
-
-    ' Wykluczenie
-    Dim exclusion As String
-    Dim empRow As Range: Set empRow = wsEmp.Range("A:A").Find(clientName, LookIn:=xlValues)
-    If Not empRow Is Nothing Then exclusion = empRow.Offset(0, 1).Value
-
-    ' Start zakresu scope
-    Dim scopeStart As Range
-    If scopeType = "Standard" Then
-        Set scopeStart = wsScope.Range("C8")
-    Else
-        Set scopeStart = wsScope.Range("F8")
-    End If
-
-    Dim taskName As String, taskCount As Integer, r As Long: r = 0
-
-    Do While scopeStart.Offset(r, 0).Value <> ""
-        taskName = scopeStart.Offset(r, 0).Value
-        taskCount = scopeStart.Offset(r, 1).Value
-
-        If taskName = exclusion Then
-            taskName = "OEDD"
-            taskCount = taskCount + 1
+Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long) As Long
+    Dim col As Long
+    For col = 1 To ws.Cells(headerRow, ws.Columns.Count).End(xlToLeft).Column
+        If Trim(ws.Cells(headerRow, col).Value) = headerName Then
+            GetColumnIndex = col
+            Exit Function
         End If
+    Next col
+    GetColumnIndex = 0
+End Function
 
-        On Error Resume Next
-        Dim wsTasks As Worksheet: Set wsTasks = Sheets(taskName)
-        On Error GoTo 0
-        If wsTasks Is Nothing Then
-            r = r + 1
-            GoTo NextScope
-        End If
+Function FindLatestAssignmentInfo(taskID As String) As String
+    Dim wsLog As Worksheet: Set wsLog = Sheets("Assigned_Tasks")
+    Dim lastRow As Long: lastRow = wsLog.Cells(wsLog.Rows.Count, 1).End(xlUp).Row
+    Dim i As Long
 
-        Dim colTask As Long, colDue As Long, colOwner As Long
-        colTask = GetColumnIndex(wsTasks, "Task", 1)
-        colDue = GetColumnIndex(wsTasks, "Due Date", 1)
-        colOwner = GetColumnIndex(wsTasks, "FINAL OWNER", 1)
-        If colTask * colDue * colOwner = 0 Then
-            r = r + 1
-            GoTo NextScope
-        End If
-
-        Dim j As Long, found As Long: found = 0
-        For j = 2 To wsTasks.Cells(wsTasks.Rows.Count, colTask).End(xlUp).Row
-            If wsTasks.Cells(j, colOwner).Value = "" Then
-                Dim taskID As String: taskID = wsTasks.Cells(j, colTask).Value
-                Dim dueDate As Variant: dueDate = wsTasks.Cells(j, colDue).Value
-                Dim comment As String: comment = FindLatestAssignmentInfo(taskID)
-
-                ' Dodaj do logu
-                Dim logRow As Long: logRow = wsLog.Cells(wsLog.Rows.Count, 1).End(xlUp).Row + 1
-                With wsLog
-                    .Cells(logRow, 1).Value = taskID
-                    .Cells(logRow, 2).Value = dueDate
-                    .Cells(logRow, 3).Value = taskName
-                    If comment = "" Then
-                        .Cells(logRow, 4).Value = clientName
-                        .Cells(logRow, 5).Value = Date
-                        .Cells(logRow, 6).Value = "Assigned"
-                        wsTasks.Cells(j, colOwner).Value = clientName ' TU WRACAMY DO WPISYWANIA
-                    Else
-                        .Cells(logRow, 4).Value = "to be verified – case already assigned to: " & comment
-                        .Cells(logRow, 5).Value = ""
-                        .Cells(logRow, 6).Value = "Duplicate – verify manually"
-                    End If
-                End With
-
-                ' Dodaj do MAKRO
-                Dim mRow As Long: mRow = wsMAKRO.Cells(wsMAKRO.Rows.Count, 1).End(xlUp).Row + 1
-                wsMAKRO.Cells(mRow, 1).Value = taskID
-                wsMAKRO.Cells(mRow, 2).Value = dueDate
-                wsMAKRO.Cells(mRow, 3).Value = ""
-                wsMAKRO.Cells(mRow, 4).Value = taskName
-                If comment = "" Then
-                    wsMAKRO.Cells(mRow, 5).Value = clientName
-                    wsMAKRO.Cells(mRow, 6).Value = "Assigned"
-                Else
-                    wsMAKRO.Cells(mRow, 5).Value = "to be verified – case already assigned to: " & comment
-                    wsMAKRO.Cells(mRow, 6).Value = "to verify"
-                    AddVerificationButtons wsMAKRO, mRow
-                End If
-
-                found = found + 1
-                If found = taskCount Then Exit For
+    For i = lastRow To 2 Step -1
+        If wsLog.Cells(i, 1).Value = taskID Then
+            Dim assignee As String: assignee = wsLog.Cells(i, 4).Value
+            Dim assignDate As Variant: assignDate = wsLog.Cells(i, 5).Value
+            Dim scopeName As String: scopeName = wsLog.Cells(i, 3).Value
+            If assignee <> "" And assignDate <> "" Then
+                FindLatestAssignmentInfo = assignee & " on " & Format(assignDate, "yyyy-mm-dd") & " from scope " & scopeName
             End If
-        Next j
+            Exit Function
+        End If
+    Next i
 
-        r = r + 1
-NextScope:
-    Loop
+    FindLatestAssignmentInfo = ""
+End Function
 
-    MsgBox "Przypisano zadania dla " & clientName, vbInformation
-    Unload callingForm
+Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
+    Dim btnDo As Button, btnReject As Button
+    Dim topPos As Double: topPos = ws.Rows(rowIndex).Top
+    Dim leftDo As Double: leftDo = ws.Columns(7).Left
+    Dim leftReject As Double: leftReject = ws.Columns(8).Left
+    Dim btnHeight As Double: btnHeight = 18
+    Dim btnWidth As Double: btnWidth = 60
+
+    Set btnDo = ws.Buttons.Add(leftDo, topPos, btnWidth, btnHeight)
+    With btnDo
+        .OnAction = "DoTask"
+        .Caption = "✅ Do Task"
+        .Name = "btnDo_" & rowIndex
+    End With
+
+    Set btnReject = ws.Buttons.Add(leftReject, topPos, btnWidth, btnHeight)
+    With btnReject
+        .OnAction = "RejectTask"
+        .Caption = "❌ Reject"
+        .Name = "btnReject_" & rowIndex
+    End With
 End Sub
