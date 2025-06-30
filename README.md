@@ -1,4 +1,4 @@
-Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object)
+    Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object)
     Dim wsScope As Worksheet, wsExample As Worksheet, wsEmp As Worksheet
     Set wsScope = Sheets("Scope")
     Set wsExample = Sheets("Example")
