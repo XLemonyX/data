@@ -1,5 +1,6 @@
 ' ======= FUNKCJA: Znajdź kolumnę po nazwie nagłówka =======
-Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long) As Long
+
+    Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long) As Long
     Dim col As Long
     For col = 1 To ws.Cells(headerRow, ws.Columns.Count).End(xlToLeft).Column
         If Trim(ws.Cells(headerRow, col).Value) = headerName Then
@@ -11,7 +12,9 @@ Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long
 End Function
 
 ' ======= FUNKCJA: Znajdź ostatnie przypisanie danego taska =======
-Function FindLatestAssignmentInfo(taskID As String) As String
+
+
+    Function FindLatestAssignmentInfo(taskID As String) As String
     Dim ws As Worksheet: Set ws = Sheets("Assigned_Tasks")
     Dim i As Long, lastRow As Long
     lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
@@ -26,7 +29,8 @@ Function FindLatestAssignmentInfo(taskID As String) As String
 End Function
 
 ' ======= PROCEDURA: Dodaj przyciski Do Task / Reject =======
-Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
+
+    Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
     Dim leftPos As Double, topPos As Double
     topPos = ws.Cells(rowIndex, 6).Top
     leftPos = ws.Cells(rowIndex, 6).Left + 70
@@ -45,7 +49,8 @@ Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
 End Sub
 
 ' ======= MAKRO: Przypisanie tasków do MAKRO + logowanie =======
-Sub AssignTasks(clientName As String, scopeName As String, callingForm As Object)
+
+    Sub AssignTasks(clientName As String, scopeName As String, callingForm As Object)
     Dim wsSource As Worksheet, wsM As Worksheet, wsA As Worksheet
     Set wsSource = Sheets(scopeName)
     Set wsM = Sheets("MAKRO")
@@ -111,7 +116,8 @@ Sub AssignTasks(clientName As String, scopeName As String, callingForm As Object
 End Sub
 
 ' ======= OBSŁUGA PRZYCISKU: Do Task =======
-Sub DoTask()
+
+    Sub DoTask()
     Dim wsM As Worksheet, wsA As Worksheet
     Set wsM = Sheets("MAKRO")
     Set wsA = Sheets("Assigned_Tasks")
@@ -138,7 +144,8 @@ Sub DoTask()
 End Sub
 
 ' ======= OBSŁUGA PRZYCISKU: Reject =======
-Sub RejectTask()
+
+    Sub RejectTask()
     Dim wsM As Worksheet, wsA As Worksheet, wsSource As Worksheet
     Set wsM = Sheets("MAKRO")
     Set wsA = Sheets("Assigned_Tasks")
