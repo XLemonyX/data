@@ -1,6 +1,7 @@
-1) funkcja
+funkcja
 
-2) ' Szuka numeru kolumny po nazwie nagłówka w zadanym wierszu
+' Szuka numeru kolumny po nazwie nagłówka w zadanym wierszu
+
 Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long) As Long
     Dim col As Long
     For col = 1 To ws.Cells(headerRow, ws.Columns.Count).End(xlToLeft).Column
@@ -12,9 +13,10 @@ Function GetColumnIndex(ws As Worksheet, headerName As String, headerRow As Long
     GetColumnIndex = 0 ' 0 = nie znaleziono
 End Function
 
-2)funkcja
+funkcja
 
 ' Szuka najnowszego wpisu w Assigned_Tasks dla danego Task ID
+
 Function FindLatestAssignmentInfo(taskID As String) As String
     Dim ws As Worksheet: Set ws = Sheets("Assigned_Tasks")
     Dim i As Long, lastRow As Long
@@ -31,8 +33,10 @@ Function FindLatestAssignmentInfo(taskID As String) As String
 End Function
 
 
-3)GŁÓWNE MAKRO
+GŁÓWNE MAKRO
+
 ' Makro przypisujące taski z zakresu do arkusza MAKRO (wcześniej Example)
+
 Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object)
     Dim wsScope As Worksheet, wsTasks As Worksheet, wsEmp As Worksheet, wsAssigned As Worksheet
     Set wsScope = Sheets("Scope")
@@ -127,9 +131,10 @@ Sub AssignTasks(clientName As String, scopeType As String, callingForm As Object
     Unload callingForm
 End Sub
 
-4)DODAWANIE PRZYCISKÓW
+DODAWANIE PRZYCISKÓW
 
 Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
+
     Dim leftPos As Double, topPos As Double
     topPos = ws.Cells(rowIndex, 6).Top
     leftPos = ws.Cells(rowIndex, 6).Left + ws.Columns(6).Width * 6
@@ -147,7 +152,7 @@ Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
     End With
 End Sub
 
-5)obsługaa przzycisków
+obsługaa przzycisków
 
 Sub DoTask()
     Dim wsM As Worksheet, wsA As Worksheet
