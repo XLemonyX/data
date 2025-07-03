@@ -1,52 +1,14 @@
-Function NormalizeSpaces(ByVal text As String) As String
-    Dim re As Object
-    Set re = CreateObject("VBScript.RegExp")
-    text = Replace(text, Chr(160), " ")
-    text = Replace(text, vbCr, " ")
-    text = Replace(text, vbLf, " ")
-    text = Replace(text, vbTab, " ")
-    Set re = CreateObject("VBScript.RegExp")
-    With re
-        .Pattern = "/s+"
-        .Global = True
-    End With
-    NormalizeSpaces = Trim(re.Replace(text, " "))
-End Function
-
-Sub ExtractSummarizedTransactions()
-Dim wsSource As Worksheet, wsReport As Worksheet
-Dim lastRow As Long, i As Long
-Dim summary As Object: Set summary = CreateObject("Scripting.Dictionary")
-Dim cleanTitles As Object: Set cleanTitles = CreateObject("Scripting.Dictionary")
-
-Dim transType As String, clientName As String, title As String
-Dim inAmount As Double, outAmount As Double, cleanTitle As String
-
-Set wsSource = ThisWorkbook.Sheets("Transaksjonsliste")
-
-On Error Resume Next
-Set wsReport = ThisWorkbook.Sheets("Report")
-If wsReport Is Nothing Then
-Set wsReport = ThisWorkbook.Sheets.Add(After:=wsSource)
-wsReport.Name = "Report"
+If Not IsError(wsSource.Cells(i, 14).Value) Then
+    If VarType(wsSource.Cells(i, 14).Value) = vbString Or VarType(wsSource.Cells(i, 14).Value) = vbVariant Then
+        clientName = Trim(CStr(wsSource.Cells(i, 14).Value))
+    Else
+        clientName = "UNKNOWN"
+    End If
 Else
-wsReport.Cells.Clear
+    clientName = "ERROR"
 End If
-On Error GoTo 0
 
-wsReport.Range("A1:D1").Value = Array("Person", "Received", "Sent", "Titles")
-lastRow = wsSource.Cells(wsSource.Rows.Count, 12).End(xlUp).Row
 
-' Zbieranie danych
-For i = 2 To lastRow
-transType = Trim(wsSource.Cells(i, 13).Value) ' M
-clientName = Trim(wsSource.Cells(i, 14).Value) ' N
-title = wsSource.Cells(i, 15).Value ' O
-
-If transType = "Straksinnbetaling" Or transType = "Straksutbetaling" Then
-' Kwoty
-If transType = "Straksinnbetaling" Then
-inAmount = 0
 If IsNumeric(wsSource.Cells(i, 17).Value) Then inAmount = CDbl(wsSource.Cells(i, 17).Value)
 outAmount = 0
 Else
