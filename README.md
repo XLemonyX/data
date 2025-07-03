@@ -1,21 +1,25 @@
-If Not IsError(wsSource.Cells(i, 14).Value) Then
-    If VarType(wsSource.Cells(i, 14).Value) = vbString Or VarType(wsSource.Cells(i, 14).Value) = vbVariant Then
-        clientName = Trim(CStr(wsSource.Cells(i, 14).Value))
+On Error Resume Next
+Dim rawVal As Variant
+rawVal = wsSource.Cells(i, 14).Value
+clientName = "UNKNOWN" ' domyślna wartość na wypadek błędu
+
+If Not IsError(rawVal) Then
+    If VarType(rawVal) = vbString Then
+        clientName = Trim(rawVal)
+    ElseIf VarType(rawVal) = vbDouble Or VarType(rawVal) = vbInteger Or VarType(rawVal) = vbLong Then
+        clientName = Trim(CStr(rawVal))
+    ElseIf VarType(rawVal) = vbNull Or VarType(rawVal) = vbEmpty Then
+        clientName = "EMPTY"
     Else
-        clientName = "UNKNOWN"
+        clientName = "UNEXPECTED"
     End If
 Else
     clientName = "ERROR"
 End If
+On Error GoTo 0
 
 
-If IsNumeric(wsSource.Cells(i, 17).Value) Then inAmount = CDbl(wsSource.Cells(i, 17).Value)
-outAmount = 0
-Else
-outAmount = 0
-If IsNumeric(wsSource.Cells(i, 16).Value) Then outAmount = Abs(CDbl(wsSource.Cells(i, 16).Value))
-inAmount = 0
-End If
+
 
 ' Tytu? oczyszczony
 If InStr(UCase(title), "VIPPS") > 0 Or InStr(UCase(title), "TRANSREF") > 0 Then
