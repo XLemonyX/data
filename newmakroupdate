@@ -238,3 +238,26 @@ Sub DoTask()
     On Error GoTo 0
 End Sub
 
+Function FindLatestAssignmentInfo(taskID As String) As String
+    Dim wsLog As Worksheet: Set wsLog = Sheets("Assigned_Tasks")
+    Dim lastRow As Long: lastRow = wsLog.Cells(wsLog.Rows.Count, 1).End(xlUp).Row
+    Dim i As Long
+
+    For i = lastRow To 2 Step -1
+        If wsLog.Cells(i, 1).Value = taskID Then
+            Dim assignee As String: assignee = wsLog.Cells(i, 4).Value
+            Dim assignDate As Variant: assignDate = wsLog.Cells(i, 5).Value
+            Dim scopeName As String: scopeName = wsLog.Cells(i, 3).Value
+            Dim status As String: status = wsLog.Cells(i, 6).Value
+
+            If assignDate <> "" And status <> "" Then
+                FindLatestAssignmentInfo = assignee & " on " & Format(assignDate, "yyyy-mm-dd") & " from scope " & scopeName & " [Status: " & status & "]"
+                Exit Function
+            End If
+        End If
+    Next i
+
+    FindLatestAssignmentInfo = ""
+End Function
+
+
