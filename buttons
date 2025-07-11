@@ -35,9 +35,32 @@ Sub Assign()
 End Sub
 
 Sub RejectTask()
-    Dim btnName As String: btnName = Application.Caller
-    Dim rowIndex As Long: rowIndex = CLng(Split(btnName, "_")(1))
-    Dim ws As Worksheet: Set ws
+    Dim btnName As String
+    btnName = Application.Caller
+
+    ' Wyciągnięcie numeru wiersza z nazwy przycisku (np. btnReject_15)
+    Dim rowIndex As Long
+    rowIndex = CLng(Split(btnName, "_")(1))
+
+    Dim ws As Worksheet
+    Set ws = Sheets("MAKRO")
+
+    ' Poproś użytkownika o powód odrzucenia
+    Dim reason As String
+    reason = InputBox("Podaj powód odrzucenia zadania:", "Reject Task")
+
+    If reason <> "" Then
+        ' Zaktualizuj dane w arkuszu
+        ws.Cells(rowIndex, 5).Value = reason
+        ws.Cells(rowIndex, 6).Value = "Rejected"
+
+        ' Usuń przyciski z tego wiersza
+        On Error Resume Next
+        ws.Shapes("btnDo_" & rowIndex).Delete
+        ws.Shapes("btnReject_" & rowIndex).Delete
+        On Error GoTo 0
+    End If
+End Sub
 
 
 
