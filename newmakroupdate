@@ -191,3 +191,50 @@ Sub RejectTask()
         On Error GoTo 0
     End If
 End Sub
+
+
+Sub DoTask()
+    Dim btnName As String: btnName = Application.Caller
+    Dim rowIndex As Long: rowIndex = CLng(Split(btnName, "_")(1))
+    Dim ws As Worksheet: Set ws = Sheets("MAKRO")
+
+    ' Pobierz dane
+    Dim taskID As String: taskID = ws.Cells(rowIndex, 1).Value
+    Dim scopeName As String: scopeName = ws.Cells(rowIndex, 4).Value
+    Dim assignee As String: assignee = ws.Cells(rowIndex, 5).Value
+
+    ' 1️⃣ Aktualizuj wpis w MAKRO
+    ws.Cells(rowIndex, 5).Value = assignee
+    ws.Cells(rowIndex, 6).Value = "Confirmed"
+
+    ' 2️⃣ Aktualizuj wpis w Assigned_Tasks
+    Dim wsLog As Worksheet: Set wsLog = Sheets("Assigned_Tasks")
+    Dim i As Long
+    For i = wsLog.Cells(wsLog.Rows.Count, 1).End(xlUp).Row To 2 Step -1
+        If wsLog.Cells(i, 1).Value = taskID And wsLog.Cells(i, 6).Value = "Duplicate – verify manually" Then
+            wsLog.Cells(i, 4).Value = assignee
+            wsLog.Cells(i, 5).Value = Date
+            wsLog.Cells(i, 6).Value = "Confirmed"
+            Exit For
+        End If
+    Next i
+
+    ' 3️⃣ Aktualizuj zakładkę źródłową (OEDD/PEP/etc.)
+    Dim wsScope As Worksheet: Set wsScope = Sheets(scopeName)
+    Dim colTask As Long: colTask = GetColumnIndex(wsScope, "Task", 1)
+    Dim colOwner As Long: colOwner = GetColumnIndex(wsScope, "FINAL OWNER", 1)
+    Dim j As Long
+    For j = 2 To wsScope.Cells(wsScope.Rows.Count, colTask).End(xlUp).Row
+        If wsScope.Cells(j, colTask).Value = taskID Then
+            wsScope.Cells(j, colOwner).Value = assignee
+            Exit For
+        End If
+    Next j
+
+    ' 🧽 Usuń przyciski
+    On Error Resume Next
+    ws.Shapes("btnDo_" & rowIndex).Delete
+    ws.Shapes("btnReject_" & rowIndex).Delete
+    On Error GoTo 0
+End Sub
+
