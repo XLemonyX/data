@@ -1,0 +1,43 @@
+Sub AddVerificationButtons(ws As Worksheet, rowIndex As Long)
+    Dim btnDo As Button, btnReject As Button
+    Dim topPos As Double: topPos = ws.Rows(rowIndex).Top
+    Dim leftDo As Double: leftDo = ws.Columns(7).Left
+    Dim leftReject As Double: leftReject = ws.Columns(8).Left
+    Dim btnHeight As Double: btnHeight = 18
+    Dim btnWidth As Double: btnWidth = 60
+
+    Set btnDo = ws.Buttons.Add(leftDo, topPos, btnWidth, btnHeight)
+    With btnDo
+        .OnAction = "Assign"
+        .Caption = " Assign"
+        .Name = "btnDo_" & rowIndex
+    End With
+
+    Set btnReject = ws.Buttons.Add(leftReject, topPos, btnWidth, btnHeight)
+    With btnReject
+        .OnAction = "RejectTask"
+        .Caption = "Reject"
+        .Name = "btnReject_" & rowIndex
+    End With
+End Sub
+
+Sub Assign()
+    Dim btnName As String: btnName = Application.Caller
+    Dim rowIndex As Long: rowIndex = CLng(Split(btnName, "_")(1))
+    Dim ws As Worksheet: Set ws = Sheets("MAKRO")
+
+    ws.Cells(rowIndex, 6).Value = "Confirmed"
+
+    On Error Resume Next
+    ws.Shapes("btnDo_" & rowIndex).Delete
+    ws.Shapes("btnReject_" & rowIndex).Delete
+    On Error GoTo 0
+End Sub
+
+Sub RejectTask()
+    Dim btnName As String: btnName = Application.Caller
+    Dim rowIndex As Long: rowIndex = CLng(Split(btnName, "_")(1))
+    Dim ws As Worksheet: Set ws
+
+
+
